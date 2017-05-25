@@ -1,0 +1,31 @@
+{
+  "name": "ns",
+  "version": "1.0.0",
+  "description": "Notification Sync Desktop Client",
+  "main": "main.js",
+  "bin": {
+    "ns": "main.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NotificationSync/ns-desktop.git"
+  },
+  "author": "Theo Sun",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/NotificationSync/ns-desktop/issues"
+  },
+  "homepage": "https://github.com/NotificationSync/ns-desktop#readme",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "inquirer": "^3.0.6",
+    "node-notifier": "^5.1.2",
+    "prompt": "^1.0.0",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1",
+    "socket.io-client": "^2.0.1"
+  }
+}
