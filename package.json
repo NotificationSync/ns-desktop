@@ -1,7 +1,7 @@
 {
-  "name": "ns",
-  "version": "1.0.0",
-  "description": "Notification Sync Desktop Client",
+  "name": "ns-notice",
+  "version": "1.0.1",
+  "description": "Notification Sync Desktop Notice Client",
   "main": "main.js",
   "bin": {
     "ns": "main.js"
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NotificationSync/ns-desktop.git"
+    "url": "git+https://github.com/NotificationSync/ns-notice.git"
   },
   "author": "Theo Sun",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/NotificationSync/ns-desktop/issues"
+    "url": "https://github.com/NotificationSync/ns-notice/issues"
   },
-  "homepage": "https://github.com/NotificationSync/ns-desktop#readme",
+  "homepage": "https://github.com/NotificationSync/ns-notice#readme",
   "dependencies": {
     "commander": "^2.9.0",
     "inquirer": "^3.0.6",
