@@ -41,17 +41,26 @@ if (!fs.existsSync(configFilePath)) {
 }
 else {
   var config = JSON.parse(fs.readFileSync(configFilePath));
-  var ws = io(config.server);
+  var ws = io(config.server, { forceNew: true });
 
-  ws.emit("user/mytoken", { token: config.token });
+  ws.on("connect", function () {
 
-  ws.on("notification/new", function (notification) {
-    console.log(notification);
-    notifier.notify({
-      title: notification.title,
-      message: notification.content
-    });
-    ws.emit("notification/read", [notification.id])
+    console.log('Connected');
+
+    ws.emit("user/mytoken", { token: config.token });
+
+    ws.on("notification/new", function (notification) {
+      notifier.notify({
+        title: notification.title,
+        message: notification.content
+      });
+      ws.emit("notification/read", [notification.id])
+    })
+
   })
+
+  ws.on('disconnect', function () {
+    console.log('Disconnected');
+  });
 }
 
