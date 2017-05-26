@@ -21,7 +21,8 @@ commander
   .parse(process.argv);
 
 if (commander.reset) {
-  fs.unlinkSync(configFilePath);
+  if (fs.existsSync(configFilePath))
+    fs.unlinkSync(configFilePath);
 }
 
 if (!fs.existsSync(configFilePath)) {
@@ -59,13 +60,18 @@ if (!fs.existsSync(configFilePath)) {
       Object.assign(config, answers);
       fs.writeFileSync(configFilePath, JSON.stringify(config));
     })
+    .then(()=>{
+      startNotificationSyncClient();
+    })
     .catch(err => {
       console.error(err.message);
       process.exit(1);
     });
+} else {
+  startNotificationSyncClient()
 }
 
-if (require.main === module) {
+function startNotificationSyncClient() {
 
   var config = JSON.parse(fs.readFileSync(configFilePath));
   var ws = io(config.server, { forceNew: true });
