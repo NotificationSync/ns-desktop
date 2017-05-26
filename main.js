@@ -1,13 +1,28 @@
 #!/usr/bin/env node
+
 const notifier = require('node-notifier');
 const inquirer = require('inquirer');
 const os = require('os');
 const io = require('socket.io-client');
 const fs = require('fs');
 const path = require('path');
+const _ = require('lodash');
 const rp = require('request-promise');
+const commander = require('commander');
+const validator = require('validator');
+const meta = require('./package');
 const configFileName = ".ns.conf.json";
 const configFilePath = path.join(os.homedir(), configFileName);
+
+
+commander
+  .version(meta.version)
+  .option('-r, --reset', 'reset client config')
+  .parse(process.argv);
+
+if (commander.reset) {
+  fs.unlinkSync(configFilePath);
+}
 
 if (!fs.existsSync(configFilePath)) {
   var config = new Object();
@@ -16,6 +31,12 @@ if (!fs.existsSync(configFilePath)) {
     { type: "input", name: "mail", message: "Your email" }
   ])
     .then(answers => {
+      if (!validator.isEmail(answers.mail)) {
+        throw new Error("Enter correct email address");
+      }
+      if (!validator.isURL(answers.server)) {
+        throw new Error("Enter correct server url");
+      }
       Object.assign(config, answers);
       var tokenUri = `${answers.server}/api/v1/user/token`;
       return rp({
@@ -37,9 +58,15 @@ if (!fs.existsSync(configFilePath)) {
     .then(answers => {
       Object.assign(config, answers);
       fs.writeFileSync(configFilePath, JSON.stringify(config));
+    })
+    .catch(err => {
+      console.error(err.message);
+      process.exit(1);
     });
 }
-else {
+
+if (require.main === module) {
+
   var config = JSON.parse(fs.readFileSync(configFilePath));
   var ws = io(config.server, { forceNew: true });
 
@@ -47,20 +74,36 @@ else {
 
     console.log('Connected');
 
-    ws.emit("user/mytoken", { token: config.token });
+    ws.emit("user/mytoken", { token: config.token }, function (msg) {
 
-    ws.on("notification/new", function (notification) {
-      notifier.notify({
-        title: notification.title,
-        message: notification.content
+      ws.emit("notification/unread", {}, function (notifications) {
+        if (notifications) {
+          var ids = _.map(notifications, notification => {
+            notifier.notify({
+              title: notification.title,
+              message: notification.content
+            });
+            return notification.id;
+          });
+          ws.emit("notification/read", ids);
+        }
       });
-      ws.emit("notification/read", [notification.id])
-    })
+
+      ws.on("notification/new", function (notification) {
+        notifier.notify({
+          title: notification.title,
+          message: notification.content
+        });
+        ws.emit("notification/read", [notification.id])
+      });
+
+
+    });
 
   })
 
   ws.on('disconnect', function () {
     console.log('Disconnected');
   });
-}
 
+}

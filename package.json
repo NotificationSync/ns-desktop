@@ -1,6 +1,6 @@
 {
   "name": "ns-notice",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Notification Sync Desktop Notice Client",
   "main": "main.js",
   "bin": {
@@ -22,10 +22,12 @@
   "dependencies": {
     "commander": "^2.9.0",
     "inquirer": "^3.0.6",
+    "lodash": "^4.17.4",
     "node-notifier": "^5.1.2",
     "prompt": "^1.0.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
-    "socket.io-client": "^2.0.1"
+    "socket.io-client": "^2.0.1",
+    "validator": "^7.0.0"
   }
 }
